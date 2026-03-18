@@ -92,7 +92,7 @@ def parse_args():
         choices=['none', 'pytorch', 'slurm', 'mpi'],
         default='none',
         help='job launcher')
-    parser.add_argument('--local-rank', type=int, default=0)
+    parser.add_argument('--local-rank', '--local_rank', dest='local_rank', type=int, default=0)
     args = parser.parse_args()
     if 'LOCAL_RANK' not in os.environ:
         os.environ['LOCAL_RANK'] = str(args.local_rank)
@@ -134,6 +134,8 @@ def main():
         torch.backends.cudnn.benchmark = True
 
     cfg.model.pretrained = None
+    if cfg.model.get('backbone') and cfg.model.backbone.get('pretrained'):
+        cfg.model.backbone.pretrained = None
     if cfg.model.get('neck'):
         if isinstance(cfg.model.neck, list):
             for neck_cfg in cfg.model.neck:

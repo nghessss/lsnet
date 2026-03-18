@@ -2,8 +2,27 @@ import torch
 from torch.autograd import Function
 import triton
 import triton.language as tl
-from torch.amp import custom_fwd, custom_bwd
 import math
+
+try:
+    from torch.amp import custom_fwd, custom_bwd
+except ImportError:
+    from torch.cuda.amp import custom_fwd as _custom_fwd
+    from torch.cuda.amp import custom_bwd as _custom_bwd
+
+    def custom_fwd(*args, **kwargs):
+        kwargs.pop('device_type', None)
+        return _custom_fwd(*args, **kwargs)
+
+    def custom_bwd(*args, **kwargs):
+        kwargs.pop('device_type', None)
+        if args and callable(args[0]) and len(args) == 1 and not kwargs:
+            return _custom_bwd(args[0])
+
+        def _decorator(fn):
+            return _custom_bwd(fn)
+
+        return _decorator
 
 def _grid(numel: int, bs: int) -> tuple:
     return (triton.cdiv(numel, bs),)

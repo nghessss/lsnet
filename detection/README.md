@@ -19,7 +19,9 @@ Results with MaskR-CNN
 
 ## Installation
 ```bash
-pip install mmcv-full==1.7.2
+pip uninstall -y torch torchvision torchaudio mmcv mmcv-full mmdet
+pip install torch==1.13.1+cu117 torchvision==0.14.1+cu117 --index-url https://download.pytorch.org/whl/cu117
+pip install mmcv-full==1.7.2 -f https://download.openmmlab.com/mmcv/dist/cu117/torch1.13/index.html
 pip install mmdet==2.28.2
 # Please replace line 160 in anaconda3/envs/seg/lib/python3.10/site-packages/mmcv/parallel/distributed.py to module_to_run = self.module
 # Please patch mmcv following https://github.com/HarborYuan/mmcv_16/commit/ad1a72fe0cbeead2716706ff618dfa0269d2cf4c
